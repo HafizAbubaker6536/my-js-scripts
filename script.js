@@ -1,4 +1,4 @@
-       // Global variables for processing
+ // Global variables for processing
         let processingCanvas, processingCtx, tempCanvas, tempCtx;
 
         // Initialize canvases
@@ -13,6 +13,70 @@
             processingCtx.imageSmoothingQuality = 'high';
             tempCtx.imageSmoothingEnabled = true;
             tempCtx.imageSmoothingQuality = 'high';
+        }
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                themeIcon.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Load saved theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon').textContent = '☀️';
+            }
+        }
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Smooth scroll to sections
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                const headerHeight = 80;
+                const elementPosition = section.offsetTop;
+                const offsetPosition = elementPosition - headerHeight;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // FAQ toggle functionality
+        function toggleFAQ(button) {
+            const answer = button.nextElementSibling;
+            const isActive = button.classList.contains('active');
+
+            // Close all FAQ items
+            document.querySelectorAll('.ytp-faq-question').forEach(q => {
+                q.classList.remove('active');
+                q.nextElementSibling.classList.remove('active');
+            });
+
+            // Toggle current item
+            if (!isActive) {
+                button.classList.add('active');
+                answer.classList.add('active');
+            }
         }
 
         function ytpGetVideoId(url) {
@@ -398,6 +462,7 @@
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
             initializeCanvases();
+            loadTheme();
             console.log('YouTube Thumbnail Downloader - 8K HD Quality Downloads with Full Enhancement');
             
             // Welcome messages
@@ -408,4 +473,28 @@
             setTimeout(() => {
                 ytpShowToast('🚀 100% working image enhancement! Press Ctrl+Enter to start', 'info');
             }, 5000);
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(e) {
+                const mobileMenu = document.getElementById('mobile-menu');
+                const menuBtn = document.querySelector('.ytp-mobile-menu-btn');
+                
+                if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+                    mobileMenu.classList.remove('active');
+                }
+            });
+
+            // Update header background on scroll
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('.ytp-nav-header');
+                if (window.scrollY > 50) {
+                    header.style.background = 'var(--background-secondary)';
+                    header.style.backdropFilter = 'var(--backdrop-blur)';
+                    header.style.boxShadow = 'var(--shadow-light)';
+                } else {
+                    header.style.background = 'var(--background-secondary)';
+                    header.style.backdropFilter = 'var(--backdrop-blur)';
+                    header.style.boxShadow = 'none';
+                }
+            });
         });
